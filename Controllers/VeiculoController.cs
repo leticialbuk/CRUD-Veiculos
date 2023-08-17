@@ -13,17 +13,16 @@ namespace CRUD_Veiculos.Controllers
         private readonly AppDbContext _context;
 
         public VeiculoController()
-        {
-            _context = new AppDbContext();
-        }
+            =>_context = new AppDbContext();
 
         [HttpGet]
         public IActionResult ObterVeiculo()
         {
-            var listVeiculos = _context.Veiculos.Find(new BsonDocument()).ToList();
-            // todo: verificar se a lista esta vazia ; return not found();
+            var listaVeiculos = _context.Veiculos.Find(new BsonDocument()).ToList();
+            if (listaVeiculos == null)
+                return NotFound();
 
-            return Ok(listVeiculos);
+            return Ok(listaVeiculos);
         }
 
         [HttpGet("byid")]
@@ -67,6 +66,5 @@ namespace CRUD_Veiculos.Controllers
 
             return Ok("Registro removido com sucesso");
         }
-
     }
 }
