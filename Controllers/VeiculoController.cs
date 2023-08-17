@@ -10,23 +10,37 @@ namespace CRUD_Veiculos.Controllers
     [Route("controller")]
     public class VeiculoController : ControllerBase
     {
-        
-        [HttpPost]
-        public IActionResult AddVeiculo([FromBody] Veiculo veiculo) 
+        private readonly AppDbContext _context;
+
+        public VeiculoController()
         {
-            var connectionVeiculos = new AppDbContext();
-            connectionVeiculos.Veiculos.InsertOne(veiculo);
+            _context = new AppDbContext();
+        }
+
+        [HttpPost]
+        public IActionResult AdicionarVeiculo([FromBody] Veiculo veiculo)
+        {
+            _context.Veiculos.InsertOne(veiculo);
 
             return Ok("Registro inserido com sucesso");
         }
 
         [HttpGet]
-        public IActionResult GetVeiculo() 
+        public IActionResult ObterVeiculo()
         {
-            var connectionVeiculos = new AppDbContext();
-            var listVeiculos = connectionVeiculos.Veiculos.Find(new BsonDocument()).ToList();
+            var listVeiculos = _context.Veiculos.Find(new BsonDocument()).ToList();
 
             return Ok(listVeiculos);
+        }
+
+        [HttpGet("byid")]
+        public IActionResult ObterVeiculoPorId(string id)
+        {
+            var veiculo = _context.Veiculos.Find(x => x.Id == id).FirstOrDefault();
+            if (veiculo == null)
+                return NotFound();
+
+            return Ok(veiculo);
         }
 
     }
