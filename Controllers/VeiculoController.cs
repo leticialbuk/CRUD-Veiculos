@@ -17,18 +17,11 @@ namespace CRUD_Veiculos.Controllers
             _context = new AppDbContext();
         }
 
-        [HttpPost]
-        public IActionResult AdicionarVeiculo([FromBody] Veiculo veiculo)
-        {
-            _context.Veiculos.InsertOne(veiculo);
-
-            return Ok("Registro inserido com sucesso");
-        }
-
         [HttpGet]
         public IActionResult ObterVeiculo()
         {
             var listVeiculos = _context.Veiculos.Find(new BsonDocument()).ToList();
+            // todo: verificar se a lista esta vazia ; return not found();
 
             return Ok(listVeiculos);
         }
@@ -41,6 +34,38 @@ namespace CRUD_Veiculos.Controllers
                 return NotFound();
 
             return Ok(veiculo);
+        }
+
+        [HttpPost]
+        public IActionResult AdicionarVeiculo([FromBody] Veiculo model)
+        {
+            _context.Veiculos.InsertOne(model);
+
+            return Ok("Registro inserido com sucesso");
+        }
+
+        [HttpPut]
+        public IActionResult AlterarVeiculo([FromBody] Veiculo model)
+        {
+            var veiculo = _context.Veiculos.Find(x => x.Id == model.Id).FirstOrDefault();
+            if (veiculo == null)
+                return NotFound();
+
+            _context.Veiculos.ReplaceOne(x => x.Id == model.Id, model);
+
+            return Ok("Registro alterado com sucesso");
+        }
+
+        [HttpDelete]
+        public IActionResult DeletarVeiculoPorId(string id)
+        {
+            var veiculo = _context.Veiculos.Find(x => x.Id == id).FirstOrDefault();
+            if (veiculo == null)
+                return NotFound();
+
+            _context.Veiculos.DeleteOne(x => x.Id == id);
+
+            return Ok("Registro removido com sucesso");
         }
 
     }
