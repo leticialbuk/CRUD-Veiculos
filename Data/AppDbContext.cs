@@ -1,4 +1,4 @@
-﻿using CRUD_Veiculos.Models;
+﻿using CRUD_Veiculos.Entities;
 using MongoDB.Driver;
 
 namespace CRUD_Veiculos.Data

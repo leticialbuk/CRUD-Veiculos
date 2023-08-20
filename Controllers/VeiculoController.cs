@@ -1,4 +1,5 @@
 ﻿using CRUD_Veiculos.Data;
+using CRUD_Veiculos.Entities;
 using CRUD_Veiculos.Models;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
@@ -34,21 +35,27 @@ namespace CRUD_Veiculos.Controllers
         }
 
         [HttpPost]
-        public IActionResult AdicionarVeiculo([FromBody] Veiculo model)
+        public IActionResult AdicionarVeiculo([FromBody] VeiculoModel model)
         {
-            _context.Veiculos.InsertOne(model);
+            var veiculo = new Veiculo(model.Marca, model.Modelo, model.Ano, model.Preco);
+            _context.Veiculos.InsertOne(veiculo);
 
             return Ok("Registro inserido com sucesso");
         }
 
         [HttpPut]
-        public IActionResult AlterarVeiculo([FromBody] Veiculo model)
+        public IActionResult AlterarVeiculo(string id, [FromBody] VeiculoModel model)
         {
-            var veiculo = _context.Veiculos.Find(x => x.Id == model.Id).FirstOrDefault();
+            var veiculo = _context.Veiculos.Find(x => x.Id == id).FirstOrDefault();
             if (veiculo == null)
                 return NotFound();
 
-            _context.Veiculos.ReplaceOne(x => x.Id == model.Id, model);
+            veiculo.Marca = model.Marca;
+            veiculo.Modelo = model.Modelo;
+            veiculo.Ano = model.Ano;
+            veiculo.Preco = model.Preco;
+
+            _context.Veiculos.ReplaceOne(x => x.Id == id, veiculo);
 
             return Ok("Registro alterado com sucesso");
         }

@@ -38,3 +38,8 @@ C:\Dev\CRUD-Veiculos\obj\Debug\net7.0\refint\CRUD-Veiculos.dll
 C:\Dev\CRUD-Veiculos\obj\Debug\net7.0\CRUD-Veiculos.pdb
 C:\Dev\CRUD-Veiculos\obj\Debug\net7.0\CRUD-Veiculos.genruntimeconfig.cache
 C:\Dev\CRUD-Veiculos\obj\Debug\net7.0\ref\CRUD-Veiculos.dll
+C:\Dev\CRUD-Veiculos\bin\Debug\net7.0\Microsoft.OpenApi.dll
+C:\Dev\CRUD-Veiculos\bin\Debug\net7.0\Swashbuckle.AspNetCore.Swagger.dll
+C:\Dev\CRUD-Veiculos\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Dev\CRUD-Veiculos\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Dev\CRUD-Veiculos\obj\Debug\net7.0\CRUD-Veiculos.MvcApplicationPartsAssemblyInfo.cs
