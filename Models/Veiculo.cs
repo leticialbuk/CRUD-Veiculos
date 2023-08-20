@@ -4,7 +4,7 @@ using MongoDB.Bson.Serialization.Attributes;
 namespace CRUD_Veiculos.Models
 {
     public class Veiculo
-    {  
+    {
 
         public Veiculo(string marca, string modelo, int ano, int preco)
         {
@@ -12,6 +12,7 @@ namespace CRUD_Veiculos.Models
             Modelo = modelo;
             Ano = ano;
             Preco = preco;
+            DataCriacao = DateTime.Now;
         }
 
         [BsonRepresentation(BsonType.ObjectId)]
@@ -20,6 +21,7 @@ namespace CRUD_Veiculos.Models
         public string Modelo { get; set; }
         public int Ano { get; set; }
         public int Preco { get; set; }
-
+        public bool Vendido { get; set; }
+        public DateTime DataCriacao { get; set; }
     }
 }

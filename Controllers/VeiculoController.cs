@@ -1,24 +1,22 @@
 ﻿using CRUD_Veiculos.Data;
 using CRUD_Veiculos.Models;
 using Microsoft.AspNetCore.Mvc;
-using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace CRUD_Veiculos.Controllers
 {
     [ApiController]
-    [Route("controller")]
+    [Route("[controller]")]
     public class VeiculoController : ControllerBase
     {
         private readonly AppDbContext _context;
 
-        public VeiculoController()
-            =>_context = new AppDbContext();
+        public VeiculoController() => _context = new AppDbContext();
 
         [HttpGet]
-        public IActionResult ObterVeiculo()
+        public IActionResult ObterVeiculos()
         {
-            var listaVeiculos = _context.Veiculos.Find(new BsonDocument()).ToList();
+            var listaVeiculos = _context.Veiculos.Find(x => x.Vendido == false).ToList();
             if (listaVeiculos == null)
                 return NotFound();
 
