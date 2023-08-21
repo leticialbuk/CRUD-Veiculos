@@ -15,10 +15,24 @@ namespace CRUD_Veiculos.Controllers
         public VeiculoController() => _context = new AppDbContext();
 
         [HttpGet]
-        public IActionResult ObterVeiculos()
+        public IActionResult ObterVeiculos(int? ano, string? modelo, int? precoMaiorQue, int? precoMenorQue, string? dataDeCadastroMaiorQue, string? dataDeCadastroMenorQue, int? skip, int? take)
         {
-            var listaVeiculos = _context.Veiculos.Find(x => x.Vendido == false).ToList();
-            if (listaVeiculos == null)
+            var listaVeiculos = _context.Veiculos.Find(x => x.Vendido == false).ToEnumerable();
+
+            if (ano != null)
+                listaVeiculos = listaVeiculos.Where(x => x.Ano == ano);
+
+            if (precoMaiorQue != null)
+                listaVeiculos = listaVeiculos.Where(x => x.Preco > precoMaiorQue);
+
+            if (dataDeCadastroMenorQue != null)
+                listaVeiculos = listaVeiculos.Where(x => x.DataCriacao < DateTime.Parse(dataDeCadastroMenorQue));
+
+            skip = skip == null ? 0 : skip;
+            take = take == null ? 5 : take;
+
+            listaVeiculos = listaVeiculos.Skip((int)skip).Take((int)take).ToList();
+            if (listaVeiculos.Count() == 0)
                 return NotFound();
 
             return Ok(listaVeiculos);
