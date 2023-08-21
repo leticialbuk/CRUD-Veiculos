@@ -60,6 +60,22 @@ namespace CRUD_Veiculos.Controllers
             return Ok("Registro alterado com sucesso");
         }
 
+        [HttpPatch]
+        public IActionResult VenderVeiculo(string id)
+        {
+            var veiculo = _context.Veiculos.Find(x => x.Id == id).FirstOrDefault();
+            if (veiculo == null)
+                return NotFound();
+
+            if (veiculo.Vendido == true)
+                return BadRequest("Este veiculo já está vendido");
+            
+            veiculo.Vendido = true;
+            _context.Veiculos.ReplaceOne(x => x.Id == id, veiculo);
+
+            return Ok("Veiculo vendido com sucesso");
+        }
+
         [HttpDelete]
         public IActionResult DeletarVeiculoPorId(string id)
         {

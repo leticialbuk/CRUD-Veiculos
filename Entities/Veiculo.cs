@@ -12,6 +12,7 @@ namespace CRUD_Veiculos.Entities
             Modelo = modelo;
             Ano = ano;
             Preco = preco;
+            Vendido = false;
             DataCriacao = DateTime.Now;
         }
 
