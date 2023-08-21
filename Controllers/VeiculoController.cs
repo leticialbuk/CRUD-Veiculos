@@ -61,7 +61,7 @@ namespace CRUD_Veiculos.Controllers
         }
 
         [HttpPatch]
-        public IActionResult VenderVeiculo(string id)
+        public IActionResult VenderVeiculo(string id, int desconto)
         {
             var veiculo = _context.Veiculos.Find(x => x.Id == id).FirstOrDefault();
             if (veiculo == null)
@@ -69,8 +69,10 @@ namespace CRUD_Veiculos.Controllers
 
             if (veiculo.Vendido == true)
                 return BadRequest("Este veiculo já está vendido");
-            
+
+            veiculo.Preco = veiculo.Preco - (veiculo.Preco * desconto / 100);
             veiculo.Vendido = true;
+
             _context.Veiculos.ReplaceOne(x => x.Id == id, veiculo);
 
             return Ok("Veiculo vendido com sucesso");
