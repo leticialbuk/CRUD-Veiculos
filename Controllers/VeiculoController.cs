@@ -34,7 +34,7 @@ namespace CRUD_Veiculos.Controllers
                 filter &= builder.Where(x => x.Preco > precoMaiorQue);
 
             if (dataDeCadastroMaiorQue != null)
-                filter &= builder.Where(x => x.DataCriacao < DateTime.Parse(dataDeCadastroMaiorQue));
+                filter &= builder.Where(x => x.DataCriacao > DateTime.Parse(dataDeCadastroMaiorQue));
 
             if (dataDeCadastroMenorQue != null)
                 filter &= builder.Where(x => x.DataCriacao < DateTime.Parse(dataDeCadastroMenorQue));
