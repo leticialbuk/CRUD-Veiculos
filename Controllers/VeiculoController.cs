@@ -22,8 +22,17 @@ namespace CRUD_Veiculos.Controllers
             if (ano != null)
                 listaVeiculos = listaVeiculos.Where(x => x.Ano == ano);
 
+            if (modelo != null)
+                listaVeiculos = listaVeiculos.Where(x => x.Modelo == modelo);
+
             if (precoMaiorQue != null)
                 listaVeiculos = listaVeiculos.Where(x => x.Preco > precoMaiorQue);
+            
+            if(precoMenorQue != null)
+                listaVeiculos = listaVeiculos.Where(x => x.Preco > precoMenorQue);
+
+            if (dataDeCadastroMaiorQue != null)
+                listaVeiculos = listaVeiculos.Where(x => x.DataCriacao < DateTime.Parse(dataDeCadastroMaiorQue));
 
             if (dataDeCadastroMenorQue != null)
                 listaVeiculos = listaVeiculos.Where(x => x.DataCriacao < DateTime.Parse(dataDeCadastroMenorQue));
