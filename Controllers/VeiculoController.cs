@@ -3,7 +3,6 @@ using CRUD_Veiculos.Entities;
 using CRUD_Veiculos.Models;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace CRUD_Veiculos.Controllers
 {
@@ -55,9 +54,34 @@ namespace CRUD_Veiculos.Controllers
         {
             var veiculo = _context.Veiculos.Find(x => x.Id == id).FirstOrDefault();
             if (veiculo == null)
-                return NotFound();
+                return NotFound("Ops! Nenhuma informação encontrada");
 
             return Ok(veiculo);
+        }
+
+        [HttpGet("vendas")]
+        public IActionResult Vendas(string data)
+        {
+            var builder = Builders<Veiculo>.Filter;
+            var filter = builder.Eq(x => x.Vendido, true);
+            filter &= builder.Eq(x => x.DataVenda, DateTime.Parse(data));
+
+            var veiculos = _context.Veiculos.Find(filter).ToList();
+            if (veiculos == null)
+                return NotFound("Ops! Nenhuma informação encontrada");
+
+            var dataVenda = DateTime.Parse(data);
+            var totalVeiculos = veiculos.Count();
+
+            var totalPreco = 0;
+            foreach (var veiculo in veiculos)
+            {
+                totalPreco += veiculo.Preco;
+            }
+
+            var vendaModel = new VendaModel(dataVenda, totalPreco, totalVeiculos);
+
+            return Ok(vendaModel);
         }
 
         [HttpPost]
@@ -74,7 +98,7 @@ namespace CRUD_Veiculos.Controllers
         {
             var veiculo = _context.Veiculos.Find(x => x.Id == id).FirstOrDefault();
             if (veiculo == null)
-                return NotFound();
+                return NotFound("Ops! Nenhuma informação encontrada");
 
             veiculo.Marca = model.Marca;
             veiculo.Modelo = model.Modelo;
@@ -91,13 +115,14 @@ namespace CRUD_Veiculos.Controllers
         {
             var veiculo = _context.Veiculos.Find(x => x.Id == id).FirstOrDefault();
             if (veiculo == null)
-                return NotFound();
+                return NotFound("Ops! Nenhuma informação encontrada");
 
             if (veiculo.Vendido == true)
                 return BadRequest("Este veiculo já está vendido");
 
             veiculo.Preco = veiculo.Preco - (veiculo.Preco * desconto / 100);
             veiculo.Vendido = true;
+            veiculo.DataVenda = DateTime.Now.Date;
 
             _context.Veiculos.ReplaceOne(x => x.Id == id, veiculo);
 
@@ -109,7 +134,7 @@ namespace CRUD_Veiculos.Controllers
         {
             var veiculo = _context.Veiculos.Find(x => x.Id == id).FirstOrDefault();
             if (veiculo == null)
-                return NotFound();
+                return NotFound("Ops! Nenhuma informação encontrada");
 
             _context.Veiculos.DeleteOne(x => x.Id == id);
 

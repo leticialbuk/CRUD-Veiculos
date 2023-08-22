@@ -24,5 +24,6 @@ namespace CRUD_Veiculos.Entities
         public int Preco { get; set; }
         public bool Vendido { get; set; }
         public DateTime DataCriacao { get; set; }
+        public DateTime? DataVenda { get; set; }
     }
 }
