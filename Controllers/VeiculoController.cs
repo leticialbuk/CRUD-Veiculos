@@ -3,6 +3,7 @@ using CRUD_Veiculos.Entities;
 using CRUD_Veiculos.Models;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace CRUD_Veiculos.Controllers
 {
@@ -15,34 +16,36 @@ namespace CRUD_Veiculos.Controllers
         public VeiculoController() => _context = new AppDbContext();
 
         [HttpGet]
-        public IActionResult ObterVeiculos(int? ano, string? modelo, int? precoMaiorQue, int? precoMenorQue, string? dataDeCadastroMaiorQue, string? dataDeCadastroMenorQue, int? skip, int? take)
+        public IActionResult ObterVeiculos(int? ano, string? modelo, int? precoMenorQue, int? precoMaiorQue, string? dataDeCadastroMaiorQue, string? dataDeCadastroMenorQue, int? skip, int? take)
         {
-            var listaVeiculos = _context.Veiculos.Find(x => x.Vendido == false).ToEnumerable();
+
+            var builder = Builders<Veiculo>.Filter;
+            var filter = builder.Eq(x => x.Vendido, false);
 
             if (ano != null)
-                listaVeiculos = listaVeiculos.Where(x => x.Ano == ano);
+                filter &= builder.Eq(x => x.Ano, ano);
 
             if (modelo != null)
-                listaVeiculos = listaVeiculos.Where(x => x.Modelo == modelo);
+                filter &= builder.Eq(x => x.Modelo, modelo);
+
+            if (precoMenorQue != null)
+                filter &= builder.Where(x => x.Preco < precoMenorQue);
 
             if (precoMaiorQue != null)
-                listaVeiculos = listaVeiculos.Where(x => x.Preco > precoMaiorQue);
-            
-            if(precoMenorQue != null)
-                listaVeiculos = listaVeiculos.Where(x => x.Preco > precoMenorQue);
+                filter &= builder.Where(x => x.Preco > precoMaiorQue);
 
             if (dataDeCadastroMaiorQue != null)
-                listaVeiculos = listaVeiculos.Where(x => x.DataCriacao < DateTime.Parse(dataDeCadastroMaiorQue));
+                filter &= builder.Where(x => x.DataCriacao < DateTime.Parse(dataDeCadastroMaiorQue));
 
             if (dataDeCadastroMenorQue != null)
-                listaVeiculos = listaVeiculos.Where(x => x.DataCriacao < DateTime.Parse(dataDeCadastroMenorQue));
+                filter &= builder.Where(x => x.DataCriacao < DateTime.Parse(dataDeCadastroMenorQue));
 
             skip = skip == null ? 0 : skip;
             take = take == null ? 5 : take;
 
-            listaVeiculos = listaVeiculos.Skip((int)skip).Take((int)take).ToList();
+            var listaVeiculos = _context.Veiculos.Find(filter).Skip(skip).Limit(take).ToEnumerable();
             if (listaVeiculos.Count() == 0)
-                return NotFound();
+                return NotFound("Ops! Nenhuma informação encontrada");
 
             return Ok(listaVeiculos);
         }
