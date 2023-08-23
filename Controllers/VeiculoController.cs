@@ -15,9 +15,8 @@ namespace CRUD_Veiculos.Controllers
         public VeiculoController() => _context = new AppDbContext();
 
         [HttpGet]
-        public IActionResult ObterVeiculos(int? ano, string? modelo, int? precoMenorQue, int? precoMaiorQue, string? dataDeCadastroMaiorQue, string? dataDeCadastroMenorQue, int? skip, int? take)
+        public IActionResult ObterVeiculos(int? ano, string? modelo, int? precoMenorQue, int? precoMaiorQue, DateTime? dataDeCadastroMaiorQue, DateTime? dataDeCadastroMenorQue, int? skip, int? take)
         {
-
             var builder = Builders<Veiculo>.Filter;
             var filter = builder.Eq(x => x.Vendido, false);
 
@@ -34,17 +33,15 @@ namespace CRUD_Veiculos.Controllers
                 filter &= builder.Where(x => x.Preco > precoMaiorQue);
 
             if (dataDeCadastroMaiorQue != null)
-                filter &= builder.Where(x => x.DataCriacao > DateTime.Parse(dataDeCadastroMaiorQue));
+                filter &= builder.Where(x => x.DataCriacao > dataDeCadastroMaiorQue);
 
             if (dataDeCadastroMenorQue != null)
-                filter &= builder.Where(x => x.DataCriacao < DateTime.Parse(dataDeCadastroMenorQue));
+                filter &= builder.Where(x => x.DataCriacao < dataDeCadastroMenorQue);
 
             skip = skip == null ? 0 : skip;
             take = take == null ? 5 : take;
 
             var listaVeiculos = _context.Veiculos.Find(filter).Skip(skip).Limit(take).ToEnumerable();
-            if (listaVeiculos.Count() == 0)
-                return NotFound("Ops! Nenhuma informação encontrada");
 
             return Ok(listaVeiculos);
         }
@@ -60,17 +57,16 @@ namespace CRUD_Veiculos.Controllers
         }
 
         [HttpGet("vendas")]
-        public IActionResult Vendas(string data)
+        public IActionResult Vendas(DateTime dataInicio, DateTime dataFim)
         {
             var builder = Builders<Veiculo>.Filter;
             var filter = builder.Eq(x => x.Vendido, true);
-            filter &= builder.Eq(x => x.DataVenda, DateTime.Parse(data));
+            filter &= builder.Where(x => x.DataVenda >= dataInicio && x.DataVenda <= dataFim);
 
             var veiculos = _context.Veiculos.Find(filter).ToList();
             if (veiculos == null)
                 return NotFound("Ops! Nenhuma informação encontrada");
 
-            var dataVenda = DateTime.Parse(data);
             var totalVeiculos = veiculos.Count();
 
             var totalPreco = 0;
@@ -79,7 +75,7 @@ namespace CRUD_Veiculos.Controllers
                 totalPreco += veiculo.Preco;
             }
 
-            var vendaModel = new VendaModel(dataVenda, totalPreco, totalVeiculos);
+            var vendaModel = new VendaModel(totalPreco, totalVeiculos);
 
             return Ok(vendaModel);
         }
